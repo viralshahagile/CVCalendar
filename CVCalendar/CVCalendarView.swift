@@ -61,7 +61,7 @@ public final class CVCalendarView: UIView {
         }
     }
 
-    public var presentedDate: CVDate! {
+    public weak var presentedDate: CVDate! {
         didSet {
             let calendar = self.delegate?.calendar?() ?? Calendar.current
             if oldValue != nil && presentedDate.convertedDate(calendar: calendar) != oldValue.convertedDate(calendar: calendar) {
