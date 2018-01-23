@@ -74,8 +74,8 @@ extension CVDate {
     }
 }
 
-private extension CVDate {
-    func dateFormattedStringWithFormat(_ format: String, fromDate date: Foundation.Date) -> String {
+extension CVDate {
+    public func dateFormattedStringWithFormat(_ format: String, fromDate date: Foundation.Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = format
         return formatter.string(from: date)

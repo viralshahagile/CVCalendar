@@ -155,11 +155,7 @@ extension CVCalendarDayView {
         let appearance = calendarView.appearance
         
         dayLabel = UILabel()
-        let numberFormatter = NumberFormatter()
-        if let locale = calendarView.delegate?.calendar?()?.locale {
-            numberFormatter.locale = locale
-        }
-        dayLabel?.text = numberFormatter.string(from: NSNumber.init(value: date.day))
+        dayLabel?.text = String(date.day)
         dayLabel?.textAlignment = NSTextAlignment.center
         dayLabel?.frame = bounds
         
@@ -292,17 +288,17 @@ extension CVCalendarDayView {
         if let delegate = calendarView.delegate {
             if let shouldShow = delegate.dotMarker?(shouldShowOnDayView: self) , shouldShow {
                 
-                var (width, height): (CGFloat, CGFloat) = (13, 13)
+                var (width, height): (CGFloat, CGFloat) = (60, 2)
                 if let size = delegate.dotMarker?(sizeOnDayView: self) {
                     (width, height) = (size, size)
                 }
-                let colors = isOut ? [.gray] : delegate.dotMarker?(colorOnDayView: self)
+                let colors = isOut ? [.white] : delegate.dotMarker?(colorOnDayView: self)
                 var yOffset = bounds.height / 5
                 if let y = delegate.dotMarker?(moveOffsetOnDayView: self) {
                     yOffset = y
                 }
                 let y = frame.midY + yOffset
-                let markerFrame = CGRect(x: 0, y: 0, width: width, height: height)
+                let markerFrame = CGRect(x: 0, y: y, width: width, height: height)
                 
                 if colors!.count > 3 {
                     assert(false, "Only 3 dot markers allowed per day")
@@ -422,7 +418,7 @@ extension CVCalendarDayView {
 
 extension CGFloat {
     public func toRadians() -> CGFloat {
-      return CGFloat(self) * CGFloat(Double.pi / 180)
+        return CGFloat(self) * CGFloat(Double.pi / 180)
     }
     
     public func toDegrees() -> CGFloat {
@@ -498,6 +494,9 @@ extension CVCalendarDayView {
             }
             
             if isCurrentDay {
+                self.layer.borderWidth = 1
+                self.layer.borderColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)?.cgColor ?? appearance?.dayLabelWeekdaySelectedBackgroundColor?.cgColor
+                
                 dayLabel?.textColor = appearance?.delegate?.dayLabelColor?(by: weekDay, status: .selected, present: present)
                     ?? appearance?.dayLabelPresentWeekdaySelectedTextColor!
                 dayLabel?.font = appearance?.delegate?.dayLabelFont?(by: weekDay, status: .selected, present: present)
@@ -506,6 +505,9 @@ extension CVCalendarDayView {
                     ?? appearance?.dayLabelPresentWeekdaySelectedBackgroundColor
                 backgroundAlpha = appearance?.dayLabelPresentWeekdaySelectedBackgroundAlpha
             } else {
+                self.layer.borderWidth = 1
+                self.layer.borderColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)?.cgColor ?? appearance?.dayLabelWeekdaySelectedBackgroundColor?.cgColor
+                
                 dayLabel?.textColor = appearance?.delegate?.dayLabelColor?(by: weekDay, status: .selected, present: present)
                     ?? appearance?.dayLabelWeekdaySelectedTextColor
                 dayLabel?.font = appearance?.delegate?.dayLabelFont?(by: weekDay, status: .selected, present: present)
@@ -513,11 +515,15 @@ extension CVCalendarDayView {
                 backgroundColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)
                     ?? appearance?.dayLabelWeekdaySelectedBackgroundColor
                 backgroundAlpha = appearance?.dayLabelWeekdaySelectedBackgroundAlpha
+                
             }
             
         case .range:
             shape = .rect
             if isCurrentDay {
+                self.layer.borderWidth = 1
+                self.layer.borderColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)?.cgColor ?? appearance?.dayLabelWeekdaySelectedBackgroundColor?.cgColor
+                
                 dayLabel?.textColor = appearance?.delegate?.dayLabelColor?(by: weekDay, status: .highlighted, present: present)
                     ?? appearance?.dayLabelPresentWeekdayHighlightedTextColor!
                 dayLabel?.font = appearance?.delegate?.dayLabelFont?(by: weekDay, status: .highlighted, present: present)
@@ -526,6 +532,9 @@ extension CVCalendarDayView {
                     ?? appearance?.dayLabelPresentWeekdayHighlightedBackgroundColor
                 backgroundAlpha = appearance?.dayLabelPresentWeekdayHighlightedBackgroundAlpha
             } else {
+                self.layer.borderWidth = 1
+                self.layer.borderColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)?.cgColor ?? appearance?.dayLabelWeekdaySelectedBackgroundColor?.cgColor
+                
                 dayLabel?.textColor = appearance?.delegate?.dayLabelColor?(by: weekDay, status: .highlighted, present: present)
                     ?? appearance?.dayLabelWeekdayHighlightedTextColor
                 dayLabel?.font = appearance?.delegate?.dayLabelFont?(by: weekDay, status: .highlighted, present: present)
@@ -533,6 +542,7 @@ extension CVCalendarDayView {
                 backgroundColor = appearance?.delegate?.dayLabelBackgroundColor?(by: weekDay, status: .selected, present: present)
                     ?? appearance?.dayLabelWeekdayHighlightedBackgroundColor
                 backgroundAlpha = appearance?.dayLabelWeekdayHighlightedBackgroundAlpha
+                
             }
         }
         
@@ -545,9 +555,9 @@ extension CVCalendarDayView {
         selectionView!.fillColor = backgroundColor
         selectionView!.alpha = backgroundAlpha
         selectionView!.setNeedsDisplay()
-        insertSubview(selectionView!, at: 0)
+        //insertSubview(selectionView!, at: 0)
         
-        moveDotMarkerBack(false, coloring: false)
+        // moveDotMarkerBack(false, coloring: false)
     }
     
     public func setDeselectedWithClearing(_ clearing: Bool) {
@@ -586,11 +596,13 @@ extension CVCalendarDayView {
             dayLabel?.textColor = appearance.delegate?.dayLabelColor?(by: weekDay, status: status, present: present) ?? color
             dayLabel?.font = appearance.delegate?.dayLabelFont?(by: weekDay, status: status, present: present) ?? font
             
-            moveDotMarkerBack(true, coloring: false)
+            //moveDotMarkerBack(true, coloring: false)
             
             if clearing {
-                selectionView?.removeFromSuperview()
-                selectionView = nil
+                self.layer.borderColor = UIColor.clear.cgColor
+                self.layer.borderWidth = 0
+                //selectionView?.removeFromSuperview()
+                //selectionView = nil
             }
             isHighlighted = false
         }
@@ -633,7 +645,7 @@ extension CVCalendarDayView {
         for object in objects {
             if object == nil {
                 if collapsing {
-                  fatalError("Object { \(String(describing: object)) } must not be nil!")
+                    fatalError("Object { \(String(describing: object)) } must not be nil!")
                 } else {
                     return
                 }
@@ -643,3 +655,5 @@ extension CVCalendarDayView {
         block()
     }
 }
+
+
