@@ -123,8 +123,9 @@ public final class CVCalendarMenuView: UIView {
             symbol.font = dayOfWeekFont
             symbol.textColor = self.delegate?.dayOfWeekTextColor?(by: weekDay)
                 ?? dayOfWeekTextColor
-            symbol.backgroundColor = self.delegate?.dayOfWeekBackGroundColor?(by: weekDay)
-                ?? dayofWeekBackgroundColor
+            //symbol.backgroundColor = self.delegate?.dayOfWeekBackGroundColor?(by: weekDay)
+                //?? dayofWeekBackgroundColor
+            symbol.backgroundColor = UIColor.clear
             self.symbolViews?.append(symbol)
             self.addSubview(symbol)
         }

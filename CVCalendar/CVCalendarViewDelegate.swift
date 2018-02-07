@@ -16,6 +16,7 @@ public protocol CVCalendarViewDelegate {
     /*
     Determines whether resizing should cause related views' animation.
     */
+    @objc optional func shouldScrollMonthView() -> Void
     @objc optional func shouldAnimateResizing() -> Bool
     @objc optional func toggleDateAnimationDuration() -> Double
 

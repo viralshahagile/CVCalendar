@@ -116,7 +116,7 @@ public final class CVCalendarMonthContentViewController: CVCalendarContentViewCo
                 replaceMonthView(presented, withIdentifier: following, animatable: false)
 
                 insertMonthView(getPreviousMonth(previous.date), withIdentifier: self.previous)
-                self.calendarView.delegate?.didShowPreviousMonthView?(previous.date)
+                self.calendarView.delegate?.didShowPreviousMonthView?(previous.date)                
             }
         }
     }
@@ -451,7 +451,7 @@ extension CVCalendarMonthContentViewController {
 // MARK: - UIScrollViewDelegate
 
 extension CVCalendarMonthContentViewController {
-
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y != 0 {
             scrollView.contentOffset = CGPoint(x: scrollView.contentOffset.x, y: 0)
@@ -478,7 +478,7 @@ extension CVCalendarMonthContentViewController {
 
         lastContentOffset = scrollView.contentOffset.x
     }
-
+    
     public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if let presented = monthViews[presented] {
             prepareTopMarkersOnMonthView(presented, hidden: true)
@@ -495,9 +495,11 @@ extension CVCalendarMonthContentViewController {
         }
 
         updateSelection()
-        updateLayoutIfNeeded()
+        //updateLayoutIfNeeded()
+        calendarView.delegate?.shouldScrollMonthView!()
         pageLoadingEnabled = true
         direction = .none
+        
     }
 
     public func scrollViewDidEndDragging(_ scrollView: UIScrollView,

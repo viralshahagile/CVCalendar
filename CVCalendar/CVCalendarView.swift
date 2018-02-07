@@ -255,34 +255,88 @@ public final class CVCalendarView: UIView {
 
 // MARK: - Frames update
 
+
+// MARK: - Frames update
+
 extension CVCalendarView {
+    
+    public func redrawViewIfNecessarry() {
+        if currentOrientation != UIDevice.current.orientation {
+            validated = false
+            currentOrientation = UIDevice.current.orientation
+        }
+        
+        setNeedsLayout()
+        layoutIfNeeded()
+        let contentViewSize = contentController.bounds.size
+        let selfSize = bounds.size
+        if selfSize.width != contentViewSize.width {
+            let width = selfSize.width
+            let height: CGFloat
+            let countOfWeeks = CGFloat(6)
+            
+            let vSpace = appearance.spaceBetweenWeekViews!
+            //let hSpace = appearance.spaceBetweenDayViews!
+            
+            if selfSize.height > maxHeight {
+                maxHeight = selfSize.height
+            }
+            
+            if let mode = calendarMode {
+                switch mode {
+                case .weekView:
+                    height = selfSize.height
+                case .monthView :
+                    height = (maxHeight / countOfWeeks) - (vSpace * countOfWeeks)
+                }
+                
+                // If no height constraint found we set it manually.
+                var found = false
+                for constraint in constraints {
+                    if constraint.firstAttribute == .height {
+                        found = true
+                    }
+                }
+                
+                if !found {
+                    addConstraint(NSLayoutConstraint(item: self, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: frame.height))
+                }
+                
+                weekViewSize = CGSize(width: width, height: height)
+                dayViewSize = CGSize(width: (width / 7.0), height: height)
+                
+                contentController.updateFrames(selfSize != contentViewSize ? bounds : CGRect.zero)
+            }
+        }
+    }
+    
     public func commitCalendarViewUpdate() {
         if currentOrientation != UIDevice.current.orientation {
             validated = false
             currentOrientation = UIDevice.current.orientation
         }
-    
+        
         setNeedsLayout()
         layoutIfNeeded()
         if let _ = delegate, let contentController = contentController {
             let contentViewSize = contentController.bounds.size
             let selfSize = bounds.size
             let screenSize = UIScreen.main.bounds.size
-
+            
             let allowed = selfSize.width <= screenSize.width && selfSize.height <= screenSize.height
-
+            
             if !validated && allowed {
                 let width = selfSize.width
                 let height: CGFloat
                 let countOfWeeks = CGFloat(6)
-
+                
                 let vSpace = appearance.spaceBetweenWeekViews!
                 let hSpace = appearance.spaceBetweenDayViews!
                 
                 if selfSize.height > maxHeight {
                     maxHeight = selfSize.height
                 }
-
+                
                 if let mode = calendarMode {
                     switch mode {
                     case .weekView:
@@ -291,7 +345,7 @@ extension CVCalendarView {
                     case .monthView :
                         height = (maxHeight / countOfWeeks) - (vSpace * countOfWeeks)
                     }
-
+                    
                     // If no height constraint found we set it manually.
                     var found = false
                     for constraint in constraints {
@@ -299,17 +353,17 @@ extension CVCalendarView {
                             found = true
                         }
                     }
-
+                    
                     if !found {
                         addConstraint(NSLayoutConstraint(item: self, attribute: .height,
-                            relatedBy: .equal, toItem: nil, attribute: .height,
-                            multiplier: 1, constant: frame.height))
+                                                         relatedBy: .equal, toItem: nil, attribute: .height,
+                                                         multiplier: 1, constant: frame.height))
                     }
-
+                    
                     weekViewSize = CGSize(width: width, height: height)
                     dayViewSize = CGSize(width: (width / 7.0) - hSpace, height: height)
                     validated = true
-
+                    
                     contentController
                         .updateFrames(selfSize != contentViewSize ? bounds : CGRect.zero)
                 }
