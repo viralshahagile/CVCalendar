@@ -331,7 +331,7 @@ extension CVCalendarDayView {
                 
                 let coordinator = calendarView.coordinator
                 if self == coordinator?.selectedDayView {
-                    moveDotMarkerBack(false, coloring: false)
+                    //moveDotMarkerBack(false, coloring: false)
                 }
             }
         }
@@ -398,7 +398,7 @@ extension CVCalendarDayView {
                         }
                         )
                     } else {
-                        moveDotMarkerBack(unwinded, coloring: coloring)
+                        //moveDotMarkerBack(unwinded, coloring: coloring)
                     }
                 }
                 
